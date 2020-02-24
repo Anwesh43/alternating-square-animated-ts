@@ -24,6 +24,48 @@ class ScaleUtil {
       }
 }
 
+class DrawingUtil {
+
+    static drawLine(context : CanvasRenderingContext2D, x1 : number, y1 : number, x2 : number, y2 : number) {
+        context.beginPath()
+        context.moveTo(x1, y1)
+        context.lineTo(x2, y2)
+        context.stroke()
+    }
+
+    static drawSquareLine(context : CanvasRenderingContext2D, k : number, size : number, scale : number) {
+        const sf : number = ScaleUtil.sinify(scale)
+        const sfi : number = ScaleUtil.divideScale(sf, k, size)
+        const sfi1 : number = ScaleUtil.divideScale(sfi, 0, 2)
+        const sfi2 : number = ScaleUtil.divideScale(sfi, 1, 2)
+        const sj : number = 1 - 2 * k
+        for (var i = 0; i < 2; i++) {
+            context.save()
+            context.translate(0, -size * sfi1 * sj)
+            context.rotate(Math.PI / 2 * i * sfi2)
+            DrawingUtil.drawLine(context, 0, 0, 0, size * sfi1 * sj)
+            context.restore()
+        }
+    }
+
+    static drawSquareLines(context : CanvasRenderingContext2D, size : number, scale : number) {
+        for (var j = 0; j < 2; j++) {
+            DrawingUtil.drawSquareLine(context, j, size, scale)
+        }
+    }
+
+    static drawSLNode(context : CanvasRenderingContext2D, i : number, scale : number) {
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / strokeFactor
+        context.strokeStyle = foreColor
+        const gap : number = h / (nodes + 1)
+        const size : number = gap / sizeFactor
+        context.save()
+        context.translate(w / 2, gap * (i + 1))
+        DrawingUtil.drawSquareLines(context, size, scale)
+        context.restore()
+    }
+}
 
 class Stage {
 
