@@ -128,8 +128,8 @@ class Animator {
     interval : number
 
     start(cb : Function) {
-        if (this.animated) {
-            cb()
+        if (!this.animated) {
+            this.animated = true
             this.interval = setInterval(cb, delay)
         }
     }
@@ -207,5 +207,27 @@ class AlternatingSquareLine {
 
     startUpdating(cb : Function) {
         this.curr.startUpdating(cb)
+    }
+}
+
+class Renderer {
+
+    asl : AlternatingSquareLine = new AlternatingSquareLine()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.asl.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.asl.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.asl.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
     }
 }
